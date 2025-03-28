@@ -1,0 +1,56 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Spring Boot ###
+*.log
+*.tmp
+
+### Maven ou Gradle ###
+/target/
+/out/
+
+### Caches IntelliJ ###
+.idea/libraries/
+.idea/workspace.xml
+.idea/modules.xml
+.idea/jarRepositories.xml
+
+### Arquivos específicos do Maven ###
+/dependency-reduced-pom.xml
+/.mvn/timing.properties
+/release.properties
+
+### Configurações locais de teste ou debug ###
+*.testcontainers.properties
+docker-compose.override.yml
