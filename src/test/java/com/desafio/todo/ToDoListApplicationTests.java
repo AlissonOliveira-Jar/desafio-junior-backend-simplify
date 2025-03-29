@@ -1,17 +1,26 @@
 package com.desafio.todo;
 
 import com.desafio.todo.entity.Todo;
+import com.desafio.todo.repository.TodoRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.util.UUID;
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TodolistApplicationTests {
+
 	@Autowired
 	private WebTestClient webTestClient;
+
+	@Autowired
+	private TodoRepository todoRepository;
+
+	@BeforeEach
+	void setUp() {
+		todoRepository.deleteAll();
+	}
 
 	@Test
 	void testCreateTodoSuccess() {

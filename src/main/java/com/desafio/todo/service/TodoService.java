@@ -5,7 +5,9 @@ import com.desafio.todo.repository.TodoRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,6 +30,12 @@ public class TodoService {
     }
 
     public List<Todo> update(Todo todo) {
+        if (todo.getID() == null) {
+            throw new IllegalArgumentException("O ID não pode ser nulo para atualização.");
+        }
+        if (!todoRepository.existsById(todo.getID())) {
+            return new ArrayList<>();
+        }
         todoRepository.save(todo);
         return list();
     }
