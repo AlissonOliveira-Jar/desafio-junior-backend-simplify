@@ -45,4 +45,46 @@ class TodolistApplicationTests {
 				.jsonPath("$.descricao").isEqualTo("A descrição não pode estar vazia.")
 				.jsonPath("$.prioridade").isEqualTo("A prioridade deve ser no mínimo 1.");
 	}
+
+	@Test
+	void testListTodosSuccess() {
+		var todo1 = new Todo("todo 1", "desc todo 1", false, 1);
+		var todo2 = new Todo("todo 2", "desc todo 2", true, 2);
+
+		webTestClient
+				.post()
+				.uri("/todos")
+				.bodyValue(todo1)
+				.exchange();
+
+		webTestClient
+				.post()
+				.uri("/todos")
+				.bodyValue(todo2)
+				.exchange();
+
+		webTestClient
+				.get()
+				.uri("/todos")
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody()
+				.jsonPath("$").isArray()
+				.jsonPath("$.length()").isEqualTo(2)
+				.jsonPath("$[0].nome").isEqualTo(todo2.getNome())
+				.jsonPath("$[1].nome").isEqualTo(todo1.getNome());
+	}
+
+	@Test
+	void testListTodosEmpty() {
+		webTestClient
+				.get()
+				.uri("/todos")
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody()
+				.jsonPath("$").isArray()
+				.jsonPath("$.length()").isEqualTo(0);
+	}
 }
+
