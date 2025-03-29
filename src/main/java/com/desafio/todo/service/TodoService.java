@@ -46,6 +46,9 @@ public class TodoService {
     }
 
     public List<Todo> delete(UUID ID) {
+        if (!todoRepository.existsById(ID)) {
+            return null;
+        }
         todoRepository.deleteById(ID);
         return list();
     }

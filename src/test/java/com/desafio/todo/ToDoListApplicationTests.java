@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.util.UUID;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TodolistApplicationTests {
 
@@ -126,6 +128,43 @@ class TodolistApplicationTests {
 				.jsonPath("$[?(@.id=='" + createdTodo.getID().toString() + "')].descricao").isEqualTo(todoAtualizado.getDescricao())
 				.jsonPath("$[?(@.id=='" + createdTodo.getID().toString() + "')].realizado").isEqualTo(todoAtualizado.isRealizado())
 				.jsonPath("$[?(@.id=='" + createdTodo.getID().toString() + "')].prioridade").isEqualTo(todoAtualizado.getPrioridade());
+	}
+
+	@Test
+	void testDeleteTodoSuccess() {
+		var todoInicial = new Todo("todo para deletar", "desc para deletar", false, 1);
+		var createdTodoList = webTestClient
+				.post()
+				.uri("/todos")
+				.bodyValue(todoInicial)
+				.exchange()
+				.expectStatus().isCreated()
+				.expectBodyList(Todo.class)
+				.returnResult()
+				.getResponseBody();
+
+		assert createdTodoList != null && !createdTodoList.isEmpty();
+		var createdTodo = createdTodoList.getFirst();
+
+		webTestClient
+				.delete()
+				.uri("/todos/" + createdTodo.getID())
+				.exchange()
+				.expectStatus().isOk()
+
+				.expectBody()
+				.jsonPath("$[?(@.id=='" + createdTodo.getID().toString() + "')]").doesNotExist();
+	}
+
+	@Test
+	void testDeleteTodoNotFound() {
+		UUID nonExistentId = UUID.randomUUID();
+
+		webTestClient
+				.delete()
+				.uri("/todos/" + nonExistentId)
+				.exchange()
+				.expectStatus().isNotFound();
 	}
 }
 

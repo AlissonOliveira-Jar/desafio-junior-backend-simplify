@@ -40,8 +40,13 @@ public class TodoController {
         }
     }
 
-    @DeleteMapping("{id}")
-    List<Todo> delete(@PathVariable("id") UUID ID) {
-        return todoService.delete(ID);
+    @DeleteMapping("/{id}")
+    ResponseEntity<List<Todo>> delete(@PathVariable("id") UUID ID) {
+        List<Todo> remainingTodos = todoService.delete(ID);
+        if (remainingTodos != null) {
+            return ResponseEntity.ok(remainingTodos);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
