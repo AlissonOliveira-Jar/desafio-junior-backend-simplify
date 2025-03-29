@@ -30,9 +30,14 @@ public class TodoController {
         return todoService.list();
     }
 
-    @PutMapping
-    List<Todo> update(@RequestBody Todo todo) {
-        return todoService.update(todo);
+    @PutMapping("/{id}")
+    ResponseEntity<List<Todo>> update(@PathVariable("id") UUID ID, @RequestBody Todo todo) {
+        List<Todo> updatedTodos = todoService.update(ID, todo);
+        if (!updatedTodos.isEmpty()) {
+            return ResponseEntity.ok(updatedTodos);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("{id}")

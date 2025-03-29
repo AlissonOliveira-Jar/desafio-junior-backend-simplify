@@ -95,5 +95,37 @@ class TodolistApplicationTests {
 				.jsonPath("$").isArray()
 				.jsonPath("$.length()").isEqualTo(0);
 	}
+
+	@Test
+	void testUpdateTodoSuccess() {
+		var todoInicial = new Todo("todo inicial", "desc inicial", false, 1);
+		var createdTodoList = webTestClient
+				.post()
+				.uri("/todos")
+				.bodyValue(todoInicial)
+				.exchange()
+				.expectStatus().isCreated()
+				.expectBodyList(Todo.class)
+				.returnResult()
+				.getResponseBody();
+
+		assert createdTodoList != null && !createdTodoList.isEmpty();
+		var createdTodo = createdTodoList.getFirst();
+
+		var todoAtualizado = new Todo("todo atualizado", "nova descrição", true, 2);
+
+		assert createdTodo != null;
+		webTestClient
+				.put()
+				.uri("/todos/" + createdTodo.getID())
+				.bodyValue(todoAtualizado)
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody()
+				.jsonPath("$[?(@.id=='" + createdTodo.getID().toString() + "')].nome").isEqualTo(todoAtualizado.getNome())
+				.jsonPath("$[?(@.id=='" + createdTodo.getID().toString() + "')].descricao").isEqualTo(todoAtualizado.getDescricao())
+				.jsonPath("$[?(@.id=='" + createdTodo.getID().toString() + "')].realizado").isEqualTo(todoAtualizado.isRealizado())
+				.jsonPath("$[?(@.id=='" + createdTodo.getID().toString() + "')].prioridade").isEqualTo(todoAtualizado.getPrioridade());
+	}
 }
 

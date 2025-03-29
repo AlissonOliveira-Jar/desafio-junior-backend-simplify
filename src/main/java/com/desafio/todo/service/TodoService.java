@@ -29,15 +29,20 @@ public class TodoService {
         return todoRepository.findAll(sort);
     }
 
-    public List<Todo> update(Todo todo) {
-        if (todo.getID() == null) {
-            throw new IllegalArgumentException("O ID não pode ser nulo para atualização.");
-        }
-        if (!todoRepository.existsById(todo.getID())) {
+    public List<Todo> update(UUID ID, Todo todo) {
+        Optional<Todo> existingTodoOptional = todoRepository.findById(ID);
+
+        if (existingTodoOptional.isPresent()) {
+            Todo existingTodo = existingTodoOptional.get();
+            existingTodo.setNome(todo.getNome());
+            existingTodo.setDescricao(todo.getDescricao());
+            existingTodo.setRealizado(todo.isRealizado());
+            existingTodo.setPrioridade(todo.getPrioridade());
+            todoRepository.save(existingTodo);
+            return list();
+        } else {
             return new ArrayList<>();
         }
-        todoRepository.save(todo);
-        return list();
     }
 
     public List<Todo> delete(UUID ID) {
