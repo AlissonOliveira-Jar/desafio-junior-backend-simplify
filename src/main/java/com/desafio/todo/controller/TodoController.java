@@ -2,6 +2,8 @@ package com.desafio.todo.controller;
 
 import com.desafio.todo.entity.Todo;
 import com.desafio.todo.service.TodoService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,8 +20,9 @@ public class TodoController {
     }
 
     @PostMapping
-    List<Todo> create(@RequestBody Todo todo) {
-        return todoService.create(todo);
+    ResponseEntity<List<Todo>> create(@RequestBody Todo todo) {
+        List<Todo> todos = todoService.create(todo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(todos);
     }
 
     @GetMapping
