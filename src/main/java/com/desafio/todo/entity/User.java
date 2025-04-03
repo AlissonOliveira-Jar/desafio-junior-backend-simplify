@@ -158,7 +158,6 @@ public class User implements UserDetails {
         this.todos = todos;
     }
 
-
     @Override
     public String toString() {
         return "User{" +
