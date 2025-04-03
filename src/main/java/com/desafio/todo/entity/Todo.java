@@ -31,17 +31,22 @@ public class Todo {
     @Min(value = 1, message = "A prioridade deve ser no mínimo 1.")
     private int prioridade;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @Version
     private Integer version;
 
     public Todo() {
     }
 
-    public Todo(String nome, String descricao, boolean realizado, int prioridade) {
+    public Todo(String nome, String descricao, boolean realizado, int prioridade, User user) {
         this.nome = nome;
         this.descricao = descricao;
         this.realizado = realizado;
         this.prioridade = prioridade;
+        setUser(user);
     }
 
     public UUID getID() {
@@ -90,5 +95,13 @@ public class Todo {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
