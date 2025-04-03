@@ -30,12 +30,7 @@ public class User implements UserDetails {
     private String email;
 
     @Column(nullable = false)
-    @Size(min = 8, message = "A senha deve ter pelo menos 8 caracteres.")
-    @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-            message = "A senha deve conter letras maiúsculas, minúsculas, números e caracteres especiais."
-    )
-    @NotBlank(message = "A senha não pode estar vazia.")
+    @NotBlank(message = "Senha obrigatória")
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -87,7 +82,7 @@ public class User implements UserDetails {
 
     public void addTodo(Todo todo) {
         todos.add(todo);
-        todo.setUser(this); // Garante a sincronização bidirecional
+        todo.setUser(this);
     }
 
     public void removeTodo(Todo todo) {
@@ -99,10 +94,9 @@ public class User implements UserDetails {
 
     }
 
-    public User(String name, String email, String password, Set<String> roles) {
+    public User(String name, String email, Set<String> roles) {
         this.name = name;
         this.email = email;
-        this.password = password;
         this.roles = roles != null ? roles : new HashSet<>();
     }
 
@@ -138,8 +132,8 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPassword(String encodedPassword) {
+        this.password = encodedPassword;
     }
 
     public Integer getVersion() {

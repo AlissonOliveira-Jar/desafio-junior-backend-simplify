@@ -1,7 +1,6 @@
 package com.desafio.todo.controller;
 
 import com.desafio.todo.dto.TodoDTO;
-import com.desafio.todo.entity.Todo;
 import com.desafio.todo.entity.User;
 import com.desafio.todo.repository.UserRepository;
 import com.desafio.todo.service.TodoService;
@@ -12,7 +11,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
