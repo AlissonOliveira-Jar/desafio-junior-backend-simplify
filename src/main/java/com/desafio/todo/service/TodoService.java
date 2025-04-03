@@ -1,55 +1,64 @@
 package com.desafio.todo.service;
 
+import com.desafio.todo.dto.TodoDTO;
 import com.desafio.todo.entity.Todo;
+import com.desafio.todo.entity.User;
 import com.desafio.todo.repository.TodoRepository;
+import com.desafio.todo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class TodoService {
 
-    private final TodoRepository todoRepository;
+    @Autowired
+    private TodoRepository todoRepository;
 
-    public TodoService(TodoRepository todoRepository) {
-        this.todoRepository = todoRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    public TodoDTO create(TodoDTO dto, UUID userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Todo todo = dto.toEntity(user);
+        Todo savedTodo = todoRepository.save(todo);
+        return TodoDTO.fromEntity(savedTodo);
     }
 
-    public List<Todo> create(Todo todo) {
-        todoRepository.save(todo);
-        return list();
+    public List<TodoDTO> list(UUID userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Sort sort = Sort.by(Sort.Direction.DESC, "prioridade").and(Sort.by(Sort.Direction.ASC, "nome"));
+        List<Todo> todos = todoRepository.findByUser(user, sort);
+        return todos.stream().map(TodoDTO::fromEntity).toList();
     }
 
-    public List<Todo> list() {
-        Sort sort = Sort.by("prioridade").descending().and(Sort.by("nome").ascending());
-        return todoRepository.findAll(sort);
-    }
+    public TodoDTO update(UUID todoId, TodoDTO dto, UUID userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Todo existingTodo = todoRepository.findByIdWithUser(todoId).orElseThrow(() -> new RuntimeException("Tarefa não encontrada"));
 
-    public List<Todo> update(UUID ID, Todo todo) {
-        Optional<Todo> existingTodoOptional = todoRepository.findById(ID);
-
-        if (existingTodoOptional.isPresent()) {
-            Todo existingTodo = existingTodoOptional.get();
-            existingTodo.setNome(todo.getNome());
-            existingTodo.setDescricao(todo.getDescricao());
-            existingTodo.setRealizado(todo.isRealizado());
-            existingTodo.setPrioridade(todo.getPrioridade());
-            todoRepository.save(existingTodo);
-            return list();
-        } else {
-            return new ArrayList<>();
+        if (!existingTodo.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Acesso negado");
         }
+
+        existingTodo.setNome(dto.nome());
+        existingTodo.setDescricao(dto.descricao());
+        existingTodo.setRealizado(dto.realizado());
+        existingTodo.setPrioridade(dto.prioridade());
+
+        Todo updatedTodo = todoRepository.save(existingTodo);
+        return TodoDTO.fromEntity(updatedTodo);
     }
 
-    public List<Todo> delete(UUID ID) {
-        if (!todoRepository.existsById(ID)) {
-            return null;
+    public void delete(UUID todoId, UUID userId) {
+        Todo existingTodo = todoRepository.findByIdWithUser(todoId).orElseThrow(() -> new RuntimeException("Tarefa não encontrada"));
+
+        if (!existingTodo.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Acesso negado");
         }
-        todoRepository.deleteById(ID);
-        return list();
+
+        todoRepository.delete(existingTodo);
     }
 }
