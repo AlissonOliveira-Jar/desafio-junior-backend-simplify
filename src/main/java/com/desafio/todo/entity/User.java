@@ -152,6 +152,14 @@ public class User implements UserDetails {
         this.todos = todos;
     }
 
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public String toString() {
         return "User{" +
