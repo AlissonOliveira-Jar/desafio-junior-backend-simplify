@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.desafio</groupId>
-	<artifactId>todo</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>To-do List</name>
-	<description>Demo project for Spring Boot</description>
+	<artifactId>backend</artifactId>
+	<version>1.0.0</version>
+	<name>Backend Service</name>
+	<description>Backend service for managing a To-do List project</description>
 	<url/>
 	<licenses>
 		<license/>
